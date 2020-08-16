@@ -8,13 +8,14 @@ fun printSexp (ATOM(NIL)) = "\n"
 | printSexp (ATOM(SYMBOL(x))) = (x ^ "\n")
 | printSexp (CONS(car, cdr)) = "(" ^ (printSexp car) ^ "\t" ^ (printSexp cdr) ^ ")";
 
+fun removeLastChar str = String.substring(str, 0, String.size(str) - 1);
+
 fun repl() =
   let
-    val readRes = parse (tokenize (valOf (TextIO.inputLine TextIO.stdIn)) )
+    val readRes = parse (tokenize (removeLastChar (valOf (TextIO.inputLine TextIO.stdIn))))
     val evalRes = eval readRes (emptyNestedEnv())
   in
     if true then repl (print(printSexp(#1 evalRes))) else 1
   end;
-
 
 repl();

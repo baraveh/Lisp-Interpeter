@@ -3,19 +3,21 @@ use "mlisp - hw2.sml";
 use "mlisp - hw4.sml";
 use "mlisp - hw5.sml";
 
-fun printSexp (ATOM(NIL)) = "\n"
-| printSexp (ATOM(NUMBER(x))) = ((Int.toString x) ^ "\n")
-| printSexp (ATOM(SYMBOL(x))) = (x ^ "\n")
-| printSexp (CONS(car, cdr)) = "(" ^ (printSexp car) ^ "\t" ^ (printSexp cdr) ^ ")";
+fun SexpToString (ATOM(NIL)) = "nil"
+| SexpToString (ATOM(NUMBER(x))) = (Int.toString x)
+| SexpToString (ATOM(SYMBOL(x))) = x
+| SexpToString (CONS(car, cdr)) = "(" ^ (SexpToString car) ^ " , " ^ (SexpToString cdr) ^ ")";
 
 fun removeLastChar str = String.substring(str, 0, String.size(str) - 1);
 
-fun repl() =
+fun repl env =
   let
     val readRes = parse (tokenize (removeLastChar (valOf (TextIO.inputLine TextIO.stdIn))))
-    val evalRes = eval readRes (emptyNestedEnv())
+    val evalRes = (eval readRes env)
+    val printRes = (print("Result = "^SexpToString(#1 evalRes)^"\n"))
   in
-    if true then repl (print(printSexp(#1 evalRes))) else 1
+    if true then repl (#2 evalRes) else 1
   end;
 
-repl();
+
+repl (emptyNestedEnv());
